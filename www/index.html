@@ -8,11 +8,42 @@
 </head>
 
 <body>
+  <form method="POST" action="login">
+    <input name="username">
+    <input name="password">
+    <input type="submit" value="Login">
+  </form>
   <div id="myapp"></div>
   <script>
-  var app = Elm.Main.init({
-    node: document.getElementById('myapp')
-  });
+
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const session_id = urlParams.get('session_id')
+  const login_fail = urlParams.get('login_failed');
+
+  console.log(session_id);
+  if (login_fail) {
+    alert("Login failed");
+  }
+  if (session_id) {
+    const evtSource = new EventSource( "/sse/" + session_id);
+    var app = null;
+    evtSource.onopen = (error) => {
+      app = Elm.Main.init({
+        node: document.getElementById('myapp'),
+        flags: session_id
+      });
+    }
+    evtSource.onmessage = (event) => {
+        if (event.data == '"SessionExpired"') {
+          localStorage.removeItem("sessionId");
+          evtSource.close();
+          window.location.href = "/";
+        }
+      app.ports.messageReceiver.send(event.data);
+    };
+  }
+
   </script>
 </body>
 </html>

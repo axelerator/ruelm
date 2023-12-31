@@ -1,11 +1,20 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
-import Html exposing (Html, button, div, h1, text)
-import Html.Events exposing (onClick)
+import Generated.Bindings as B exposing (ToBackend, ToFrontend)
+import Html exposing (Html, div, h1, text)
+import Http exposing (Error)
+import Json.Decode
 
 
-main : Program () Model Msg
+port messageReceiver : (String -> msg) -> Sub msg
+
+
+type alias SessionId =
+    String
+
+
+main : Program SessionId Model Msg
 main =
     Browser.element
         { init = init
@@ -17,37 +26,66 @@ main =
 
 type alias Model =
     { count : Int
+    , sessionId : SessionId
     }
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( { count = 0 }
-    , Cmd.none
+init : SessionId -> ( Model, Cmd Msg )
+init sessionId =
+    ( { count = 0, sessionId = sessionId }
+    , sendToBackend sessionId B.Connect
     )
 
 
+sendToBackend : SessionId -> ToBackend -> Cmd Msg
+sendToBackend sessionId msg =
+    Http.post
+        { url = "/send/" ++ sessionId
+        , body = Http.jsonBody <| B.toBackendEncoder msg
+        , expect = Http.expectWhatever SentToBackend
+        }
+
+
 type Msg
-    = Increment
+    = SentToBackend (Result Error ())
+    | FromBackend String
+
+
+updateFromBackend : ToFrontend -> Model -> ( Model, Cmd Msg )
+updateFromBackend toFrontend model =
+    case toFrontend of
+        B.Welcome ->
+            ( model
+            , Cmd.none
+            )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Increment ->
-            ( { model | count = model.count + 1 }
+        FromBackend jsonStr ->
+            case Json.Decode.decodeString B.toFrontendDecoder jsonStr of
+                Ok toFrontend ->
+                    updateFromBackend toFrontend model
+
+                _ ->
+                    ( model
+                    , Cmd.none
+                    )
+
+        SentToBackend _ ->
+            ( model
             , Cmd.none
             )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    messageReceiver <| FromBackend
 
 
 view : Model -> Html Msg
 view model =
     div []
         [ h1 [] [ text (String.fromInt model.count) ]
-        , button [ onClick Increment ] [ text "+" ]
         ]
