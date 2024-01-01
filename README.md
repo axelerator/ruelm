@@ -3,6 +3,15 @@
 Rülm is a minimal, fullstack web app template for Rust and Elm.
 It is not a crate/library/framework (yet) but rather an app that's
 supposed to be a starting point to build a full app.
+In less than 500 lines of code!
+
+```text
+$ wc -l src/main.rs client/src/Main.elm www/index.html
+     183 src/main.rs
+      95 client/src/Main.elm
+      47 www/index.html
+     325 total
+```
 
 The approach is inspired by [Lamdera's](https://dashboard.lamdera.app/docs) message exchange model.
 That means the app developer does not have to care about the specifics of the underlying (http)protocol.
@@ -15,14 +24,18 @@ Directory structure:
 
 ```text
 ├── src
-│   └── main.rs      // Rust server
+│   └── main.rs              // Rust server
 ├── client
-│   └── src
-│       └── Main.elm // Elm client 
+│   ├── src
+│   │   ├── generated
+│   │   │   └── Bindings.elm // generated Elm bindings
+│   │   └── Main.elm         // Elm client 
+│   └── bin
+│       └── watch.sh         // (MacOs) watch script to compile on save
 └── www
-    ├── index.html   // Entry point
+    ├── index.html           // Entry point
     └── assets
-        └── main.js  // compiled Elm code 
+        └── main.js          // compiled Elm code 
 ```
 
 ### Authentication
