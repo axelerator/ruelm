@@ -35,6 +35,7 @@ impl Clients {
 impl Clients {
     fn try_login(&mut self, username: &str, password: &str) -> Option<SessionId> {
         if password == "pw" {
+            // replace with proper password matching
             let session_id = Uuid::new_v4();
             self.authenticated.insert(session_id, username.to_string());
             Some(session_id)
@@ -53,7 +54,7 @@ enum ToBackend {
 
 #[derive(Serialize, Deserialize, Debug, Elm, ElmDecode)]
 enum ToFrontend {
-    Welcome,
+    Welcome(String),
     SessionExpired,
 }
 
@@ -81,7 +82,12 @@ async fn main() {
                 WorkerMessage::FromFrontend(session_id, message) => match message {
                     ToBackend::Connect => {
                         let clients = state_for_worker.read().await;
-                        clients.send(session_id, ToFrontend::Welcome).await;
+                        clients
+                            .send(
+                                session_id,
+                                ToFrontend::Welcome("Hello from Rust".to_string()),
+                            )
+                            .await;
                     }
                 },
             }
@@ -148,7 +154,7 @@ async fn sse_handler(
 
     Sse::new(stream).keep_alive(
         axum::response::sse::KeepAlive::new()
-            .interval(Duration::from_secs(5))
+            .interval(Duration::from_secs(1))
             .text("keep-alive-text"),
     )
 }

@@ -27,12 +27,13 @@ main =
 type alias Model =
     { count : Int
     , sessionId : SessionId
+    , messageFromBackend : String
     }
 
 
 init : SessionId -> ( Model, Cmd Msg )
 init sessionId =
-    ( { count = 0, sessionId = sessionId }
+    ( { count = 0, sessionId = sessionId, messageFromBackend = "" }
     , sendToBackend sessionId B.Connect
     )
 
@@ -54,10 +55,13 @@ type Msg
 updateFromBackend : ToFrontend -> Model -> ( Model, Cmd Msg )
 updateFromBackend toFrontend model =
     case toFrontend of
-        B.Welcome ->
-            ( model
+        B.Welcome msg ->
+            ( { model | messageFromBackend = msg }
             , Cmd.none
             )
+
+        _ ->
+            ( model, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -87,5 +91,5 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
     div []
-        [ h1 [] [ text (String.fromInt model.count) ]
+        [ h1 [] [ text model.messageFromBackend ]
         ]

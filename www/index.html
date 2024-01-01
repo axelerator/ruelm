@@ -6,7 +6,6 @@
   <title>Main</title>
   <script src="assets/main.js"></script>
 </head>
-
 <body>
   <form method="POST" action="login">
     <input name="username">
@@ -21,20 +20,20 @@
   const session_id = urlParams.get('session_id')
   const login_fail = urlParams.get('login_failed');
 
-  console.log(session_id);
-  if (login_fail) {
-    alert("Login failed");
-  }
+  if (login_fail) { alert("Login failed"); }
   if (session_id) {
+    console.log("connecting");
     const evtSource = new EventSource( "/sse/" + session_id);
     var app = null;
     evtSource.onopen = (error) => {
+      console.log("connected");
       app = Elm.Main.init({
         node: document.getElementById('myapp'),
         flags: session_id
       });
     }
     evtSource.onmessage = (event) => {
+      console.log(event.data);
         if (event.data == '"SessionExpired"') {
           localStorage.removeItem("sessionId");
           evtSource.close();
@@ -43,7 +42,6 @@
       app.ports.messageReceiver.send(event.data);
     };
   }
-
   </script>
 </body>
 </html>

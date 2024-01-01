@@ -6141,7 +6141,7 @@ var $author$project$Main$sendToBackend = F2(
 	});
 var $author$project$Main$init = function (sessionId) {
 	return _Utils_Tuple2(
-		{count: 0, sessionId: sessionId},
+		{count: 0, messageFromBackend: '', sessionId: sessionId},
 		A2($author$project$Main$sendToBackend, sessionId, $author$project$Generated$Bindings$Connect));
 };
 var $elm$json$Json$Decode$string = _Json_decodeString;
@@ -6152,47 +6152,66 @@ var $author$project$Main$messageReceiver = _Platform_incomingPort('messageReceiv
 var $author$project$Main$subscriptions = function (_v0) {
 	return $author$project$Main$messageReceiver($author$project$Main$FromBackend);
 };
-var $elm$core$Debug$log = _Debug_log;
+var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Main$update = F2(
-	function (msg, model) {
-		switch (msg.$) {
-			case 'FromBackend':
-				var jsonStr = msg.a;
-				var _v1 = A2($elm$core$Debug$log, 'Received from backend: ', jsonStr);
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			case 'SentToBackend':
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-			default:
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{count: model.count + 1}),
-					$elm$core$Platform$Cmd$none);
+var $author$project$Generated$Bindings$SessionExpired = {$: 'SessionExpired'};
+var $author$project$Generated$Bindings$Welcome = function (a) {
+	return {$: 'Welcome', a: a};
+};
+var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $elm$json$Json$Decode$fail = _Json_fail;
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
+var $author$project$Generated$Bindings$toFrontendDecoder = $elm$json$Json$Decode$oneOf(
+	_List_fromArray(
+		[
+			A2(
+			$elm$json$Json$Decode$map,
+			$author$project$Generated$Bindings$Welcome,
+			A2($elm$json$Json$Decode$field, 'Welcome', $elm$json$Json$Decode$string)),
+			A2(
+			$elm$json$Json$Decode$andThen,
+			function (x) {
+				if (x === 'SessionExpired') {
+					return $elm$json$Json$Decode$succeed($author$project$Generated$Bindings$SessionExpired);
+				} else {
+					var unexpected = x;
+					return $elm$json$Json$Decode$fail('Unexpected variant ' + unexpected);
+				}
+			},
+			$elm$json$Json$Decode$string)
+		]));
+var $author$project$Main$updateFromBackend = F2(
+	function (toFrontend, model) {
+		if (toFrontend.$ === 'Welcome') {
+			var msg = toFrontend.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{messageFromBackend: msg}),
+				$elm$core$Platform$Cmd$none);
+		} else {
+			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
-var $author$project$Main$Increment = {$: 'Increment'};
-var $elm$html$Html$button = _VirtualDom_node('button');
+var $author$project$Main$update = F2(
+	function (msg, model) {
+		if (msg.$ === 'FromBackend') {
+			var jsonStr = msg.a;
+			var _v1 = A2($elm$json$Json$Decode$decodeString, $author$project$Generated$Bindings$toFrontendDecoder, jsonStr);
+			if (_v1.$ === 'Ok') {
+				var toFrontend = _v1.a;
+				return A2($author$project$Main$updateFromBackend, toFrontend, model);
+			} else {
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			}
+		} else {
+			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+		}
+	});
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Main$view = function (model) {
@@ -6206,18 +6225,7 @@ var $author$project$Main$view = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(
-						$elm$core$String$fromInt(model.count))
-					])),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick($author$project$Main$Increment)
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('+')
+						$elm$html$Html$text(model.messageFromBackend)
 					]))
 			]));
 };
