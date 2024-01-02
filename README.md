@@ -18,6 +18,28 @@ That means the app developer does not have to care about the specifics of the un
 
 I you have questions or suggestions feel free reach out to me (@axelerator) on the [Elm Slack](https://elm-lang.org/community/slack)
 
+## How to run
+
+In the project directory:
+
+```
+~ ruelm $ cargo run
+    Finished dev [unoptimized + debuginfo] target(s) in 0.22s
+     Running `target/debug/ruelm`
+```
+This will generate the `Bindings.elm` module necessary to compile the Elm
+client and starts the server. `Ctrl + C` to kill the server.
+
+Change into the Elm client directory and compile it into the `www` folder like so:
+```
+~ ruelm » cd client
+~ ruelm/client » elm make src/Main.elm --output=../www/assets/main.js
+Success!
+
+    Main ───> ../www/assets/main.js
+```
+Alternatively to the last step, there is also [a watch script](client/bin/watch.sh) that will recompile the Elm client on changes, but it's only tested on MacOs so far.
+
 ## How it works
 
 Directory structure:
