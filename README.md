@@ -89,5 +89,5 @@ deserialized in the matching Rust type.
 The messages will be processed in a single worked thread where the server can respond by sending
 `ToFrontend` messages to one more clients (identified by `session_id`)
 
-`ToFrontend` messages can be sent using the `sendToFrontend` function.
-
+These messages get transferred to the Elm client through a port and then centrally processed
+by the [`updateFromBackend` function](https://github.com/axelerator/ruelm/blob/main/client/src/Main.elm#L55)
