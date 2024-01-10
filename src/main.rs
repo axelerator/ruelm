@@ -175,7 +175,7 @@ fn write_elm_types() {
     })
     .unwrap();
     let target_filename =
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("client/src/generated/Bindings.elm");
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("client/src/Generated/Bindings.elm");
     File::create(target_filename)
         .unwrap()
         .write_all(String::from_utf8(target).unwrap().as_bytes())
