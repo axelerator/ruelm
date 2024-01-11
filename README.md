@@ -87,7 +87,7 @@ The same happens for the `ToFrontend` enum that defines the messages from the se
 deserialized in the matching Rust type.
 
 The messages will be processed in a single worked thread where the server can respond by sending
-`ToFrontend` messages to one more clients (identified by `session_id`)
+`ToFrontend` messages to one or more clients (identified by `session_id`)
 
 These messages get transferred to the Elm client through a port and then centrally processed
 by the [`updateFromBackend` function](https://github.com/axelerator/ruelm/blob/main/client/src/Main.elm#L55)
