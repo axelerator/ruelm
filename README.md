@@ -38,7 +38,7 @@ Success!
 
     Main ───> ../www/assets/main.js
 ```
-Alternatively to the last step, there is also [a watch script](client/bin/watch.sh) that will recompile the Elm client on changes, but it's only tested on MacOs so far.
+Alternatively to the last step, there is also [a watch script](client/bin/watch.sh) that will recompile the Elm client on changes, but it's only tested on macOS so far.
 
 ## How it works
 
