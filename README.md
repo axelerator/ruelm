@@ -53,7 +53,7 @@ Directory structure:
 │   │   │   └── Bindings.elm // generated Elm bindings
 │   │   └── Main.elm         // Elm client 
 │   └── bin
-│       └── watch.sh         // (MacOs) watch script to compile on save
+│       └── watch.sh         // (macOS) watch script to compile on save
 └── www
     ├── index.html           // Entry point
     └── assets
