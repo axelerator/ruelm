@@ -84,7 +84,7 @@ the matching Elm types into the Elm applications `src` directory.
 The same happens for the `ToFrontend` enum that defines the messages from the server to the frontend.
 
 `ToBackend` messages can be sent using the `sendToBackend` function where they will be automatically
-deserialized in the matching Rust type.
+deserialized into the matching Rust type.
 
 The messages will be processed in a single worked thread where the server can respond by sending
 `ToFrontend` messages to one more clients (identified by `session_id`)
