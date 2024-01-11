@@ -16,7 +16,7 @@ $ wc -l src/main.rs client/src/Main.elm www/index.html
 The approach is inspired by [Lamdera's](https://dashboard.lamdera.app/docs) message exchange model.
 That means the app developer does not have to care about the specifics of the underlying (http)protocol.
 
-I you have questions or suggestions feel free reach out to me (@axelerator) on the [Elm Slack](https://elm-lang.org/community/slack)
+If you have questions or suggestions feel free reach out to me (@axelerator) on the [Elm Slack](https://elm-lang.org/community/slack)
 
 ## How to run
 
