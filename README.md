@@ -86,7 +86,7 @@ The same happens for the `ToFrontend` enum that defines the messages from the se
 `ToBackend` messages can be sent using the `sendToBackend` function where they will be automatically
 deserialized in the matching Rust type.
 
-The messages will be processed in a single worked thread where the server can respond by sending
+The messages will be processed in a single worker thread where the server can respond by sending
 `ToFrontend` messages to one more clients (identified by `session_id`)
 
 These messages get transferred to the Elm client through a port and then centrally processed
