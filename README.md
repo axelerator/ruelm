@@ -79,7 +79,7 @@ There is one more route `/send` that the Elm client can use to send messages to 
 
 Messages from the frontend to the backend are defined on the Rust side as the `ToBackend` enum.
 When the server gets started it uses the [`elm_rs` crate](https://crates.io/crates/elm-rs) to write
-the matching Elm types into the Elm applications `src` directory.
+the matching Elm types into the Elm application's `src` directory.
 
 The same happens for the `ToFrontend` enum that defines the messages from the server to the frontend.
 
